@@ -152,6 +152,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_subdirectory(3rdPartyLibs/LLVMDemangle)
+add_subdirectory(Decompiler)
 
 add_subdirectory(AppCUI)
 add_subdirectory(GViewCore)

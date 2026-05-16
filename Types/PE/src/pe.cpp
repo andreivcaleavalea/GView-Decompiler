@@ -232,6 +232,9 @@ PLUGIN_EXPORT bool PopulateWindow(Reference<GView::View::WindowInterface> win)
     if (pe->HasPanel(PE::Panels::IDs::OpCodes)) {
         win->AddPanel(Pointer<TabPage>(new PE::Panels::OpCodes(win->GetObject(), pe)), true);
     }
+    if (pe->HasPanel(PE::Panels::IDs::Decompiler)) {
+        win->AddPanel(Pointer<TabPage>(new PE::Panels::Decompiler(win->GetObject(), pe)), false);
+    }
 
     return true;
 }

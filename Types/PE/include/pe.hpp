@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Decompiler.h"
 #include "GView.hpp"
 
 constexpr auto MAX_NR_SECTIONS    = 256;
@@ -111,7 +112,8 @@ namespace Type
                 TLS,
                 Symbols,
                 GoInformation,
-                OpCodes
+                OpCodes,
+                Decompiler
             };
         };
         class VersionInformation
@@ -1159,6 +1161,19 @@ namespace Type
                 void Update();
                 bool OnUpdateCommandBar(AppCUI::Application::CommandBar& commandBar) override;
                 bool OnEvent(Reference<Control>, Event evnt, int controlID) override;
+            };
+
+            class Decompiler : public AppCUI::Controls::TabPage
+            {
+                Reference<PEFile> pe;
+                Reference<Object> object;
+                Reference<AppCUI::Controls::TextArea> output;
+                std::string text;
+
+                void Update();
+
+              public:
+                Decompiler(Reference<Object> object, Reference<GView::Type::PE::PEFile> pe);
             };
         }; // namespace Panels
 

@@ -18,8 +18,7 @@ std::string InstructionBytesToString(const GView::Dissasembly::Instruction& inst
 {
     std::ostringstream result;
     result << std::hex;
-    for (int i = 0; i < instruction.size && i < GView::Dissasembly::BYTES_SIZE; i++)
-    {
+    for (int i = 0; i < instruction.size && i < GView::Dissasembly::BYTES_SIZE; i++) {
         if (i != 0)
             result << ' ';
         result.width(2);
@@ -39,8 +38,7 @@ std::string SectionName(const GView::Type::PE::ImageSectionHeader& section)
 
 GView::Dissasembly::Architecture GetArchitecture(GView::Type::PE::MachineType machineType)
 {
-    switch (machineType)
-    {
+    switch (machineType) {
     case GView::Type::PE::MachineType::I386:
         return GView::Dissasembly::Architecture::x86;
     case GView::Type::PE::MachineType::AMD64:
@@ -52,8 +50,7 @@ GView::Dissasembly::Architecture GetArchitecture(GView::Type::PE::MachineType ma
 
 const GView::Type::PE::ImageSectionHeader* GetTextSection(Reference<GView::Type::PE::PEFile> pe)
 {
-    for (uint32 i = 0; i < pe->nrSections; i++)
-    {
+    for (uint32 i = 0; i < pe->nrSections; i++) {
         const auto& section = pe->sect[i];
         if (SectionName(section) == ".text" && section.SizeOfRawData > 0)
             return &section;
@@ -86,8 +83,7 @@ std::vector<::Decompiler::SectionInfo> BuildSections(Reference<GView::Type::PE::
     std::vector<::Decompiler::SectionInfo> sections;
     sections.reserve(pe->nrSections);
 
-    for (uint32 i = 0; i < pe->nrSections; i++)
-    {
+    for (uint32 i = 0; i < pe->nrSections; i++) {
         const auto& section      = pe->sect[i];
         const bool isExecutable  = (section.Characteristics & __IMAGE_SCN_MEM_EXECUTE) == __IMAGE_SCN_MEM_EXECUTE;
         const auto virtualSize   = static_cast<uint64>(section.Misc.VirtualSize);
@@ -105,15 +101,14 @@ std::vector<::Decompiler::AssemblyInstruction> BuildInstructions(const std::vect
     std::vector<::Decompiler::AssemblyInstruction> instructions;
     instructions.reserve(disassembled.size());
 
-    for (const auto& instruction : disassembled)
-    {
-        instructions.push_back(::Decompiler::AssemblyInstruction{
-              instruction.address,
-              instruction.size,
-              FixedCString(instruction.mnemonic, GView::Dissasembly::MNEMONIC_SIZE),
-              FixedCString(instruction.opStr, GView::Dissasembly::OP_STR_SIZE),
-              InstructionBytesToString(instruction),
-              {} });
+    for (const auto& instruction : disassembled) {
+        instructions.push_back(
+              ::Decompiler::AssemblyInstruction{ instruction.address,
+                                                 instruction.size,
+                                                 FixedCString(instruction.mnemonic, GView::Dissasembly::MNEMONIC_SIZE),
+                                                 FixedCString(instruction.opStr, GView::Dissasembly::OP_STR_SIZE),
+                                                 InstructionBytesToString(instruction),
+                                                 {} });
     }
 
     return instructions;
@@ -123,14 +118,13 @@ std::vector<::Decompiler::COFFSymbolInfo> BuildCOFFSymbols(Reference<GView::Type
 {
     std::vector<::Decompiler::COFFSymbolInfo> symbols;
     symbols.reserve(pe->symbols.size());
-    for (const auto& symbol : pe->symbols)
-    {
-        symbols.push_back(::Decompiler::COFFSymbolInfo{
-              symbol.name.GetText(),
-              static_cast<uint32_t>(symbol.is.Value),
-              static_cast<int16_t>(symbol.is.SectionNumber),
-              static_cast<uint16_t>(symbol.is.Type),
-              static_cast<uint8_t>(symbol.is.StorageClass) });
+    for (const auto& symbol : pe->symbols) {
+        symbols.push_back(
+              ::Decompiler::COFFSymbolInfo{ symbol.name.GetText(),
+                                            static_cast<uint32_t>(symbol.is.Value),
+                                            static_cast<int16_t>(symbol.is.SectionNumber),
+                                            static_cast<uint16_t>(symbol.is.Type),
+                                            static_cast<uint8_t>(symbol.is.StorageClass) });
     }
 
     return symbols;
@@ -156,10 +150,10 @@ std::string BuildText(Reference<Object> object, Reference<GView::Type::PE::PEFil
     if (textSection == nullptr || textSection->PointerToRawData >= object->GetData().GetSize())
         return "No .text PE section was found.";
 
-    const auto fileOffset = static_cast<uint64>(textSection->PointerToRawData);
-    const auto virtualAddress = pe->imageBase + textSection->VirtualAddress;
+    const auto fileOffset        = static_cast<uint64>(textSection->PointerToRawData);
+    const auto virtualAddress    = pe->imageBase + textSection->VirtualAddress;
     const auto remainingFileSize = object->GetData().GetSize() - fileOffset;
-    const auto size = std::min<uint64>(static_cast<uint64>(textSection->SizeOfRawData), remainingFileSize);
+    const auto size              = std::min<uint64>(static_cast<uint64>(textSection->SizeOfRawData), remainingFileSize);
     if (size == 0)
         return "The executable PE section is empty.";
 
@@ -173,15 +167,13 @@ std::string BuildText(Reference<Object> object, Reference<GView::Type::PE::PEFil
         return "No x86/x64 instructions were found in executable PE sections.";
 
     const auto rawData = CopyRawData(object);
-    const ::Decompiler::DecompileContext context{
-        sections,
-        coffSymbols,
-        &rawData,
-        GetEntryPointAddress(pe),
-        true,
-        ::Decompiler::BinaryFormat::PE,
-        pe->hdr64 ? ::Decompiler::BinarySubformat::PE64 : ::Decompiler::BinarySubformat::PE32
-    };
+    const ::Decompiler::DecompileContext context{ sections,
+                                                  coffSymbols,
+                                                  &rawData,
+                                                  GetEntryPointAddress(pe),
+                                                  false,
+                                                  ::Decompiler::BinaryFormat::PE,
+                                                  pe->hdr64 ? ::Decompiler::BinarySubformat::PE64 : ::Decompiler::BinarySubformat::PE32 };
     return ::Decompiler::DecompileToString(instructions, context, 0);
 }
 } // namespace GView::Type::PE::Panels::DecompilerAdapter

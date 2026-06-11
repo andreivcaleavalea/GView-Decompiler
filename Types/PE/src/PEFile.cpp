@@ -1561,8 +1561,11 @@ bool PEFile::Update()
 
     switch ((PE::MachineType) nth32.FileHeader.Machine) {
     case PE::MachineType::I386:
+     case PE::MachineType::AMD64:
+        ADD_PANEL(Panels::IDs::OpCodes);
+        ADD_PANEL(Panels::IDs::Decompiler);
+        break;
     case PE::MachineType::IA64:
-    case PE::MachineType::AMD64:
         ADD_PANEL(Panels::IDs::OpCodes);
     default:
         break;

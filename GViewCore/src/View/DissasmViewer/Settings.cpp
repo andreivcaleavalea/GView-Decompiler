@@ -68,6 +68,11 @@ void Settings::AddCollapsibleZone(uint64 offset, uint64 size)
     INTERNAL_SETTINGS->collapsibleAndTextZones[offset] = { offset, size, true };
 }
 
+void Settings::AddDecompiledLine(uint64 address, std::string_view cppLine)
+{
+    INTERNAL_SETTINGS->decompiledLines[address] = std::string(cppLine);
+}
+
 void Settings::SetOffsetTranslationList(std::initializer_list<std::string_view> list, Reference<OffsetTranslateInterface> cbk)
 {
     if ((!cbk.IsValid()) || (list.size() == 0))

@@ -1649,6 +1649,7 @@ namespace View
 
             void AddMemoryMapping(uint64 address, std::string_view name, MemoryMappingType mappingType);
             void AddCollapsibleZone(uint64 offset, uint64 size);
+            void AddDecompiledLine(uint64 address, std::string_view cppLine);
 
             /**
              * Add a new data type with its definition. Default data types: UInt8-64,Int8-64, float,double, asciiZ, Unicode16Z,Unicode32Z

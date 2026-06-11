@@ -405,6 +405,7 @@ namespace View
             std::map<uint64, CollapsibleAndTextData> collapsibleAndTextZones;
             std::unordered_map<TypeID, DissasmStructureType> userDesignedTypes; // user defined types
             Reference<BufferViewer::OffsetTranslateInterface> offsetTranslateCallback;
+            std::unordered_map<uint64, std::string> decompiledLines; // section-relative offset -> decompiled C++ line
 
             bool SaveToCache(DissasmCache& cache, Reference<GView::Object> obj);
             bool ValidateCacheData(DissasmCache& cache, Reference<GView::Object> obj);

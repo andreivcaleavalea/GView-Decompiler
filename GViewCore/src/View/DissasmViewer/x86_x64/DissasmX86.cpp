@@ -40,6 +40,7 @@ constexpr uint32 textTotalColumnLength =
       addressTotalLength + textColumnTextLength + opCodesTotalLength + textColumnTotalLength + textColumnIndicatorArrowLinesSpace;
 constexpr uint32 commentPaddingLength   = 10;
 constexpr uint32 textPaddingLabelsSpace = 3;
+constexpr uint32 dissasmColumnWidth     = 45;
 
 // TODO: to be moved inside plugin for some sort of API for token<->color
 inline ColorPair GetASMColorPairByKeyword(std::string_view keyword, DissasmColors& colors, const AsmData& data)
@@ -783,6 +784,21 @@ bool Instance::DrawDissasmX86AndX64CodeZone(DrawLineInfo& dli, DissasmCodeZone* 
 
         constexpr std::string_view dissasmTitle = "Dissasm";
         chars.Add(dissasmTitle.data(), ColorMan.Colors.AsmTitleColor);
+
+        if (!settings->decompiledLines.empty()) {
+            uint32 cppColumn = textTotalColumnLength + dissasmColumnWidth;
+            if (config.ShowOnlyDissasm)
+                cppColumn -= textAndOpCodesTotalLength;
+            const uint32 pad = (chars.Len() < cppColumn) ? (cppColumn - chars.Len()) : 1u;
+            spaces.Clear();
+            spaces.SetChars(' ', pad);
+            chars.Add(spaces, ColorMan.Colors.AsmTitleColor);
+            chars.InsertChar('|', chars.Len(), titleColumnColor);
+            chars.Add("   ", ColorMan.Colors.AsmTitleColor);
+            constexpr std::string_view cppTitle = "C++";
+            chars.Add(cppTitle.data(), ColorMan.Colors.AsmTitleColor);
+        }
+
         uint32 titleColorRemaining = Layout.totalCharactersPerLine - chars.Len();
         if (chars.Len() > Layout.totalCharactersPerLine)
             titleColorRemaining = 0;
@@ -866,6 +882,22 @@ bool Instance::DrawDissasmX86AndX64CodeZone(DrawLineInfo& dli, DissasmCodeZone* 
         spaces.AddChars(';', 1);
         chars.Add(spaces, ColorMan.Colors.AsmComment);
         chars.Add(comment, ColorMan.Colors.AsmComment);
+    }
+
+    if (!settings->decompiledLines.empty()) {
+        uint32 cppColumn = textTotalColumnLength + dissasmColumnWidth;
+        if (config.ShowOnlyDissasm)
+            cppColumn -= textAndOpCodesTotalLength;
+        const uint32 pad = (chars.Len() < cppColumn) ? (cppColumn - chars.Len()) : 1u;
+        LocalString<DISSAM_MINIMUM_COMMENTS_X> spaces;
+        spaces.AddChars(' ', pad);
+        chars.Add(spaces, ColorMan.Colors.AsmDefaultColor);
+        chars.InsertChar('|', chars.Len(), ColorMan.Colors.AsmTitleColumnColor);
+        chars.Add("   ", ColorMan.Colors.AsmDefaultColor);
+        const auto cppIt = settings->decompiledLines.find(asmCacheLine->address);
+        if (cppIt != settings->decompiledLines.end()) {
+            chars.Add(cppIt->second.c_str(), ColorMan.Colors.AsmDefaultColor);
+        }
     }
 
     const auto bufferToDraw = CharacterView{ chars.GetBuffer(), chars.Len() };
@@ -1192,12 +1224,11 @@ DissasmCodeInternalType* GView::View::DissasmViewer::GetRecursiveCollpasedZoneBy
     return GetRecursiveCollpasedZoneByLineRecursive(parent, line);
 }
 
-GStatus DissasmCodeZone::TryRenameLine(
-      uint32 line, Reference<GView::Object> obj, std::string_view* newName, DissasmInsnExtractLineParams* params)
+GStatus DissasmCodeZone::TryRenameLine(uint32 line, Reference<GView::Object> obj, std::string_view* newName, DissasmInsnExtractLineParams* params)
 {
     // TODO: improve, add searching function to search inside types for the current annotation
     std::string currentName = {};
-    auto& annotations = dissasmType.annotations;
+    auto& annotations       = dissasmType.annotations;
     {
         auto it = annotations.find(line);
         if (it != annotations.end()) {
@@ -1212,12 +1243,12 @@ GStatus DissasmCodeZone::TryRenameLine(
     if (currentName.empty()) {
         auto asmLine = GetCurrentAsmLine(line, obj, params);
         if (asmLine.flags == DissasmAsmPreCacheLine::InstructionFlag::JmpFlag) {
-            //TODO: change to std::sting_view
+            // TODO: change to std::sting_view
             std::string annotation_name = std::string(asmLine.op_str, asmLine.op_str_size);
             auto res                    = annotations.get_line_by_annotation_name(annotation_name);
             if (res.has_value()) {
                 currentName = std::move(annotation_name);
-                line = res.value();
+                line        = res.value();
             }
         }
     }

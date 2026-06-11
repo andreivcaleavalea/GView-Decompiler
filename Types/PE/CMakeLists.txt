@@ -18,3 +18,4 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 include(type)
 create_type(PE)
+target_link_libraries(PE PRIVATE DecompilerLib)

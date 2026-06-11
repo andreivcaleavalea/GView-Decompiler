@@ -190,6 +190,9 @@ UInt16 e_res[4];)");
         settings.AddMemoryMapping(RVA, Name, DissasmViewer::MemoryMappingType::FunctionMapping);
     }
 
+    if (pe->HasPanel(PE::Panels::IDs::Decompiler))
+        GView::Type::PE::Panels::DecompilerAdapter::PopulateDecompiledLines(win->GetObject(), pe, settings);
+
     win->CreateViewer(settings);
 }
 
@@ -231,6 +234,9 @@ PLUGIN_EXPORT bool PopulateWindow(Reference<GView::View::WindowInterface> win)
     }
     if (pe->HasPanel(PE::Panels::IDs::OpCodes)) {
         win->AddPanel(Pointer<TabPage>(new PE::Panels::OpCodes(win->GetObject(), pe)), true);
+    }
+    if (pe->HasPanel(PE::Panels::IDs::Decompiler)) {
+        win->AddPanel(Pointer<TabPage>(new PE::Panels::Decompiler(win->GetObject(), pe)), false);
     }
 
     return true;

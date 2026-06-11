@@ -99,8 +99,7 @@ namespace Type
         }; // namespace Constants
         namespace Panels
         {
-            enum class IDs : uint8
-            {
+            enum class IDs : uint8 {
                 Information = 0,
                 Directories,
                 Exports,
@@ -119,15 +118,13 @@ namespace Type
         class VersionInformation
         {
 #pragma pack(push, 1)
-            struct VersionString
-            {
+            struct VersionString {
                 uint16 wLength;
                 uint16 wValueLength;
                 uint16 wType;
                 uint16 Key[1];
             };
-            struct VS_FIXEDFILEINFO
-            {
+            struct VS_FIXEDFILEINFO {
                 uint32 dwSignature;
                 uint32 dwStrucVersion;
                 uint32 dwFileVersionMS;
@@ -143,8 +140,7 @@ namespace Type
                 uint32 dwFileDateLS;
             };
 #pragma pack(pop)
-            struct VersionPair
-            {
+            struct VersionPair {
                 String Key, Value;
                 uint16 Unicode[MAX_VERSION_UNICODE];
             };
@@ -177,8 +173,7 @@ namespace Type
             }
         };
 
-        struct WinCertificate
-        {
+        struct WinCertificate {
             uint32 dwLength;
             uint16 wRevision;
             uint16 wCertificateType; // WIN_CERT_TYPE_xxx
@@ -193,8 +188,7 @@ namespace Type
         constexpr auto __WIN_CERT_TYPE_RESERVED_1       = 0x0003; // Reserved
         constexpr auto __WIN_CERT_TYPE_TS_STACK_SIGNED  = 0x0004; // Terminal Server Protocol Stack Certificate signing
 
-        struct Guid
-        {
+        struct Guid {
             uint32 Data1;
             uint16 Data2;
             uint16 Data3;
@@ -203,18 +197,15 @@ namespace Type
 
 #pragma pack(push, 4)
 
-        struct ImageTLSDirectory32
-        {
+        struct ImageTLSDirectory32 {
             uint32 StartAddressOfRawData;
             uint32 EndAddressOfRawData;
             uint32 AddressOfIndex;     // PDWORD
             uint32 AddressOfCallBacks; // PIMAGE_TLS_CALLBACK *
             uint32 SizeOfZeroFill;
-            union
-            {
+            union {
                 uint32 Characteristics;
-                struct
-                {
+                struct {
                     uint32 Reserved0 : 20;
                     uint32 Alignment : 4;
                     uint32 Reserved1 : 8;
@@ -222,8 +213,7 @@ namespace Type
             };
         };
 
-        struct ImageDebugDirectory
-        {
+        struct ImageDebugDirectory {
             uint32 Characteristics;
             uint32 TimeDateStamp;
             uint16 MajorVersion;
@@ -234,8 +224,7 @@ namespace Type
             uint32 PointerToRawData;
         };
 
-        struct ImageExportDirectory
-        {
+        struct ImageExportDirectory {
             uint32 Characteristics;
             uint32 TimeDateStamp;
             uint16 MajorVersion;
@@ -251,8 +240,7 @@ namespace Type
 
 #pragma pack(push, 2)
 
-        struct ImageDOSHeader
-        {
+        struct ImageDOSHeader {
             uint16 e_magic;    // Magic number
             uint16 e_cblp;     // Bytes on last page of file
             uint16 e_cp;       // Pages in file
@@ -276,8 +264,7 @@ namespace Type
 
 #pragma pack(pop) // Back to 4 byte packing.
 
-        struct ImageFileHeader
-        {
+        struct ImageFileHeader {
             uint16 Machine;
             uint16 NumberOfSections;
             uint32 TimeDateStamp;
@@ -287,14 +274,12 @@ namespace Type
             uint16 Characteristics;
         };
 
-        struct ImageDataDirectory
-        {
+        struct ImageDataDirectory {
             uint32 VirtualAddress;
             uint32 Size;
         };
 
-        struct ImageOptionalHeader32
-        {
+        struct ImageOptionalHeader32 {
             uint16 Magic;
             uint8 MajorLinkerVersion;
             uint8 MinorLinkerVersion;
@@ -328,15 +313,13 @@ namespace Type
             ImageDataDirectory DataDirectory[__IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
         };
 
-        struct ImageNTHeaders32
-        {
+        struct ImageNTHeaders32 {
             uint32 Signature;
             ImageFileHeader FileHeader;
             ImageOptionalHeader32 OptionalHeader;
         };
 
-        struct ImageOptionalHeader64
-        {
+        struct ImageOptionalHeader64 {
             uint16 Magic;
             uint8 MajorLinkerVersion;
             uint8 MinorLinkerVersion;
@@ -369,18 +352,15 @@ namespace Type
             ImageDataDirectory DataDirectory[__IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
         };
 
-        struct ImageNTHeaders64
-        {
+        struct ImageNTHeaders64 {
             uint32 Signature;
             ImageFileHeader FileHeader;
             ImageOptionalHeader64 OptionalHeader;
         };
 
-        struct ImageSectionHeader
-        {
+        struct ImageSectionHeader {
             uint8 Name[__IMAGE_SIZEOF_SHORT_NAME];
-            union
-            {
+            union {
                 uint32 PhysicalAddress;
                 uint32 VirtualSize;
             } Misc;
@@ -394,10 +374,8 @@ namespace Type
             uint32 Characteristics;
         };
 
-        struct ImageImportDescriptor
-        {
-            union
-            {
+        struct ImageImportDescriptor {
+            union {
                 uint32 Characteristics;    // 0 for terminating null import descriptor
                 uint32 OriginalFirstThunk; // RVA to original unbound IAT (PIMAGE_THUNK_DATA)
             };
@@ -411,16 +389,14 @@ namespace Type
             uint32 FirstThunk; // RVA to IAT (if bound this IAT has actual addresses)
         };
 
-        struct ImageResourceDataEntry
-        {
+        struct ImageResourceDataEntry {
             uint32 OffsetToData;
             uint32 Size;
             uint32 CodePage;
             uint32 Reserved;
         };
 
-        struct ImageResourceDirectory
-        {
+        struct ImageResourceDirectory {
             uint32 Characteristics;
             uint32 TimeDateStamp;
             uint16 MajorVersion;
@@ -430,33 +406,26 @@ namespace Type
             //  IMAGE_RESOURCE_DIRECTORY_ENTRY DirectoryEntries[];
         };
 
-        struct ImageResourceDirectoryEntry
-        {
-            union
-            {
-                struct
-                {
+        struct ImageResourceDirectoryEntry {
+            union {
+                struct {
                     uint32 NameOffset : 31;
                     uint32 NameIsString : 1;
                 };
                 uint32 Name;
                 uint16 Id;
             };
-            union
-            {
+            union {
                 uint32 OffsetToData;
-                struct
-                {
+                struct {
                     uint32 OffsetToDirectory : 31;
                     uint32 DataIsDirectory : 1;
                 };
             };
         };
 
-        struct ImageThunkData32
-        {
-            union
-            {
+        struct ImageThunkData32 {
+            union {
                 uint32 ForwarderString; // PBYTE
                 uint32 Function;        // PDWORD
                 uint32 Ordinal;
@@ -465,13 +434,10 @@ namespace Type
         };
 
 #pragma pack(push, 1)
-        struct ImageSymbol
-        {
-            union
-            {
+        struct ImageSymbol {
+            union {
                 uint8 ShortName[__IMAGE_SIZEOF_SHORT_NAME];
-                struct
-                {
+                struct {
                     uint32 Short; // if 0, use LongName
                     uint32 Long;  // offset into string table
                 } Name;
@@ -530,10 +496,8 @@ namespace Type
 
 #pragma pack(push, 8)
 
-        struct ImageThunkData64
-        {
-            union
-            {
+        struct ImageThunkData64 {
+            union {
                 uint64 ForwarderString; // PBYTE
                 uint64 Function;        // PDWORD
                 uint64 Ordinal;
@@ -545,8 +509,7 @@ namespace Type
 
 #pragma pack(pop) // Back to default packing.
 
-        struct DIBInfoHeader
-        {
+        struct DIBInfoHeader {
             uint32 sizeOfHeader;
             uint32 width;
             uint32 height;
@@ -559,8 +522,7 @@ namespace Type
             uint32 numberOfColors;
             uint32 numberOfImportantColors;
         };
-        struct PNGHeader
-        {
+        struct PNGHeader {
             uint32 magic;
             uint32 reserved;
             uint32 ihdrLength;
@@ -569,15 +531,9 @@ namespace Type
             uint32 height;
         };
 
-        enum class AddressType : uint8
-        {
-            FileOffset = 0,
-            RVA        = 1,
-            VA         = 2
-        };
+        enum class AddressType : uint8 { FileOffset = 0, RVA = 1, VA = 2 };
 
-        enum class MachineType : uint16
-        {
+        enum class MachineType : uint16 {
             Unknown   = 0,
             I386      = 0x014c, // Intel 386.
             R3000     = 0x0162, // MIPS little-endian, 0x160 big-endian
@@ -611,8 +567,7 @@ namespace Type
             CEE       = 0xC0EE,
         };
 
-        enum class SubsystemType : uint16
-        {
+        enum class SubsystemType : uint16 {
             Unknown                = 0,  // Unknown subsystem.
             Native                 = 1,  // Image doesn't require a subsystem.
             WindowGUI              = 2,  // Image runs in the Windows GUI subsystem.
@@ -628,8 +583,7 @@ namespace Type
             XBOX                   = 14,
             WindowsBootApplication = 16,
         };
-        enum class DirectoryType : uint8
-        {
+        enum class DirectoryType : uint8 {
             Export        = 0,
             Import        = 1,
             Resource      = 2,
@@ -646,8 +600,7 @@ namespace Type
             DelayImport   = 13,
             COMDescriptor = 14
         };
-        enum class ResourceType : uint32
-        {
+        enum class ResourceType : uint32 {
             Cursor       = 1,
             Bitmap       = 2,
             Icon         = 3,
@@ -679,7 +632,7 @@ namespace Type
         static constexpr auto EXE_MARKER_COLOR     = ColorPair{ Color::Yellow, Color::DarkRed };
 
         static constexpr uint32 PE_COMMAND_DIGITAL_SIGNATURE = 0;
-        static constexpr uint32 PE_COMMAND_AREA_HIGHLIGHTER = 1;
+        static constexpr uint32 PE_COMMAND_AREA_HIGHLIGHTER  = 1;
 
         static KeyboardControl PE_COMMANDS[] = {
             { Input::Key::Alt | Input::Key::F8, "DigitalSignature", "Validate digital signature", PE_COMMAND_DIGITAL_SIGNATURE },
@@ -691,26 +644,18 @@ namespace Type
                        public GView::View::BufferViewer::PositionToColorInterface
         {
           public:
-            struct ExportedFunction
-            {
+            struct ExportedFunction {
                 uint32 RVA;
                 uint16 Ordinal;
                 String Name;
             };
-            struct PEColors
-            {
+            struct PEColors {
                 ColorPair colMZ, colPE, colSectDef;
                 ColorPair colSect;
                 ColorPair colDir[15];
             };
-            enum class ImageType : uint8
-            {
-                DIB = 0,
-                PNG,
-                Unknown = 0xFF
-            };
-            struct ResourceInformation
-            {
+            enum class ImageType : uint8 { DIB = 0, PNG, Unknown = 0xFF };
+            struct ResourceInformation {
                 ResourceType Type;
                 uint32 ID;
                 uint32 CodePage;
@@ -718,28 +663,24 @@ namespace Type
                 uint64 Start;
                 uint64 Size;
                 FixSizeString<61> Name;
-                struct
-                {
+                struct {
                     uint32 width, height;
                     uint8 bitsPerPixel;
                     ImageType type;
                 } Image;
             };
 
-            struct ImportDllInformation
-            {
+            struct ImportDllInformation {
                 uint64 RVA;
                 FixSizeString<117> Name;
             };
-            struct ImportFunctionInformation
-            {
+            struct ImportFunctionInformation {
                 uint64 RVA;
                 uint32 dllIndex;
                 String Name;
             };
 
-            struct SymbolInformation
-            {
+            struct SymbolInformation {
                 String name; // this can be either short or long name that needs to be located
                 ImageSymbol is;
             };
@@ -747,8 +688,7 @@ namespace Type
           public:
             // PE informations
             ImageDOSHeader dos;
-            union
-            {
+            union {
                 ImageNTHeaders32 nth32;
                 ImageNTHeaders64 nth64;
             };
@@ -1175,6 +1115,13 @@ namespace Type
               public:
                 Decompiler(Reference<Object> object, Reference<GView::Type::PE::PEFile> pe);
             };
+            namespace DecompilerAdapter
+            {
+                std::string BuildText(Reference<Object> object, Reference<GView::Type::PE::PEFile> pe);
+                std::string BuildFunctionsText(Reference<Object> object, Reference<GView::Type::PE::PEFile> pe);
+                void PopulateDecompiledLines(Reference<Object> object, Reference<GView::Type::PE::PEFile> pe, GView::View::DissasmViewer::Settings& settings);
+            } // namespace DecompilerAdapter
+
         }; // namespace Panels
 
         namespace Commands
@@ -1232,6 +1179,6 @@ namespace Type
                 bool GetColorForByteAt(uint64 offset, const GView::View::ViewData& vd, ColorPair& cp) override;
             };
         } // namespace Commands
-    }     // namespace PE
+    } // namespace PE
 } // namespace Type
 } // namespace GView

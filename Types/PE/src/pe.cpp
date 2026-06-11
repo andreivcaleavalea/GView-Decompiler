@@ -190,6 +190,9 @@ UInt16 e_res[4];)");
         settings.AddMemoryMapping(RVA, Name, DissasmViewer::MemoryMappingType::FunctionMapping);
     }
 
+    if (pe->HasPanel(PE::Panels::IDs::Decompiler))
+        GView::Type::PE::Panels::DecompilerAdapter::PopulateDecompiledLines(win->GetObject(), pe, settings);
+
     win->CreateViewer(settings);
 }
 
